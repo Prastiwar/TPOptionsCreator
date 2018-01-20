@@ -2,15 +2,48 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TP_Menu
+namespace TP_Options
 {
     public class TPOptionsLayout : MonoBehaviour
     {
-        TPMenuCreator creator;
-        Canvas canvas;
+        delegate void Action(int i);
+        Action qualityAction;
+        Action resAction;
+        Action shadowQualAction;
+        Action shadowAction;
+        Action antialiasingAction;
+        Action textureAction;
 
-        bool isMusicOn;
-        bool isFXOn;
+        public bool isMusicOn;
+        public bool isFXOn;
+
+        public Dropdown resDropdown;
+        public Dropdown qualityDropdown;
+        public Dropdown aliasingDropdown;
+        public Dropdown shadowQualDropdown;
+        public Dropdown shadowDropdown;
+        public Dropdown textureDropdown;
+
+        public Toggle fullscreenToggle;
+        public Toggle vSyncToggle;
+        public Toggle anisotropicToggle;
+
+        public Button fxButton;
+        public Button musicButton;
+        public Sprite fxImageOn;
+        public Sprite fxImageOff;
+        public Sprite musicImageOn;
+        public Sprite musicImageOff;
+        public Slider fxSlider;
+        public Slider musicSlider;
+        public string mixerFXText;
+        public string mixerMusicText;
+        public UnityEngine.Audio.AudioMixer AudioMixer;
+
+        TPOptionsCreator creator;
+        Canvas canvas;
+        Image fxImage;
+        Image musicImage;
 
         int CustomQualityIndex;
         int previousLevel;
@@ -28,39 +61,6 @@ namespace TP_Menu
         List<string> aliasingOptions = new List<string>();
         List<string> textureOptions = new List<string>();
 
-        [SerializeField] Dropdown resDropdown;
-        [SerializeField] Dropdown qualityDropdown;
-        [SerializeField] Dropdown aliasingDropdown;
-        [SerializeField] Dropdown shadowQualDropdown;
-        [SerializeField] Dropdown shadowDropdown;
-        [SerializeField] Dropdown textureDropdown;
-
-        [SerializeField] Toggle fullscreenToggle;
-        [SerializeField] Toggle vSyncToggle;
-        [SerializeField] Toggle anisotropicToggle;
-
-        Image fxImage;
-        Image musicImage;
-        [SerializeField] Button fxButton;
-        [SerializeField] Button musicButton;
-        [SerializeField] Sprite fxImageOn;
-        [SerializeField] Sprite fxImageOff;
-        [SerializeField] Sprite musicImageOn;
-        [SerializeField] Sprite musicImageOff;
-        [SerializeField] Slider fxSlider;
-        [SerializeField] Slider musicSlider;
-        [SerializeField] string mixerFXText;
-        [SerializeField] string mixerMusicText;
-        [SerializeField] UnityEngine.Audio.AudioMixer AudioMixer;
-
-        delegate void Action(int i);
-        Action qualityAction;
-        Action resAction;
-        Action shadowQualAction;
-        Action shadowAction;
-        Action antialiasingAction;
-        Action textureAction;
-
         void Awake()
         {
             Initialize();
@@ -68,7 +68,7 @@ namespace TP_Menu
 
         public void Initialize()
         {
-            if (creator == null) creator = FindObjectOfType<TPMenuCreator>();
+            if (creator == null) creator = FindObjectOfType<TPOptionsCreator>();
             if (canvas == null) canvas = GetComponent<Canvas>();
             if (fxImage == null && fxButton) fxImage = fxButton.GetComponent<Image>();
             if (musicImage == null && musicButton) musicImage = musicButton.GetComponent<Image>();

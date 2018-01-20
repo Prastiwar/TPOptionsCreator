@@ -1,13 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using TP_Menu;
+﻿using UnityEditor;
+using TP_Options;
 
-namespace TP_MenuEditor
+namespace TP_OptionsEditor
 {
     [CustomEditor(typeof(TPOptionsLayout))]
-    public class TPOptionsLayoutEditor : ScriptlessMenuEditor
+    public class TPOptionsLayoutEditor : ScriptlessOptionsEditor
     {
         public override void OnInspectorGUI()
         {

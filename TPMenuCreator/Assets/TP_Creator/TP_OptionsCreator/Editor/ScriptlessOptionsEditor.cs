@@ -1,9 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace TP_MenuEditor
+namespace TP_OptionsEditor
 {
-    public class ScriptlessMenuEditor : Editor
+    public class ScriptlessOptionsEditor : Editor
     {
         public readonly string scriptField = "m_Script";
 
@@ -18,7 +18,7 @@ namespace TP_MenuEditor
         {
             if (GUILayout.Button("Open Menu Manager", GUILayout.Height(30)))
             {
-                TPMenuDesigner.OpenWindow();
+                TPOptionsDesigner.OpenWindow();
             }
         }
     }

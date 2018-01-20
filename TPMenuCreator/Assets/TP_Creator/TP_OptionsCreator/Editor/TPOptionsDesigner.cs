@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using TP_Menu;
+using TP_Options;
 using UnityEditor.SceneManagement;
 
-namespace TP_MenuEditor
+namespace TP_OptionsEditor
 {
     [InitializeOnLoad]
-    public class TPMenuDesigner : EditorWindow
+    public class TPOptionsDesigner : EditorWindow
     {
-        public static TPMenuDesigner window;
+        public static TPOptionsDesigner window;
         static string currentScene;
 
         [MenuItem("TP_Creator/TP_MenuCreator")]
@@ -19,7 +19,7 @@ namespace TP_MenuEditor
                 Debug.Log("You can't change Menu Designer runtime!");
                 return;
             }
-            window = (TPMenuDesigner)GetWindow(typeof(TPMenuDesigner));
+            window = (TPOptionsDesigner)GetWindow(typeof(TPOptionsDesigner));
             currentScene = EditorSceneManager.GetActiveScene().name;
             EditorApplication.hierarchyWindowChanged += hierarchyWindowChanged;
             window.minSize = new Vector2(615, 290);
@@ -31,15 +31,15 @@ namespace TP_MenuEditor
         {
             if (currentScene != EditorSceneManager.GetActiveScene().name)
             {
-                if (TPMenuToolsWindow.window)
-                    TPMenuToolsWindow.window.Close();
+                if (TPOptionsToolsWindow.window)
+                    TPOptionsToolsWindow.window.Close();
                 if (window)
                     window.Close();
             }
         }
 
-        public static TPMenuGUIData EditorData;
-        public static TPMenuCreator MenuCreator;
+        public static TPOptionsGUIData EditorData;
+        public static TPOptionsCreator OptionsCreator;
         public static GUISkin skin;
 
         Texture2D headerTexture;
@@ -61,15 +61,15 @@ namespace TP_MenuEditor
             InitTextures();
             InitCreator();
 
-            if(MenuCreator)
-                creator = new SerializedObject(MenuCreator);
+            if(OptionsCreator)
+                creator = new SerializedObject(OptionsCreator);
         }
 
         void InitEditorData()
         {
             EditorData = AssetDatabase.LoadAssetAtPath(
-                   "Assets/TP_Creator/TP_MenuCreator/EditorResources/MenuEditorGUIData.asset",
-                   typeof(TPMenuGUIData)) as TPMenuGUIData;
+                   "Assets/TP_Creator/TP_OptionsCreator/EditorResources/OptionsEditorGUIData.asset",
+                   typeof(TPOptionsGUIData)) as TPOptionsGUIData;
             
             if (EditorData == null)
                 CreateEditorData();
@@ -83,12 +83,12 @@ namespace TP_MenuEditor
         {
             if (EditorData.GUISkin == null)
                 EditorData.GUISkin = AssetDatabase.LoadAssetAtPath(
-                      "Assets/TP_Creator/TP_MenuCreator/EditorResources/TPMenuGUISkin.guiskin",
+                      "Assets/TP_Creator/TP_OptionsCreator/EditorResources/TPOptionsGUISkin.guiskin",
                       typeof(GUISkin)) as GUISkin;
 
-            if (EditorData.MenuPrefab == null)
-                EditorData.MenuPrefab = AssetDatabase.LoadAssetAtPath(
-                    "Assets/TP_Creator/TP_MenuCreator/EditorResources/MenuCanvas.prefab",
+            if (EditorData.OptionsPrefab == null)
+                EditorData.OptionsPrefab = AssetDatabase.LoadAssetAtPath(
+                    "Assets/TP_Creator/TP_OptionsCreator/EditorResources/OptionsCanvas.prefab",
                     typeof(GameObject)) as GameObject;
 
             EditorUtility.SetDirty(EditorData);
@@ -96,8 +96,8 @@ namespace TP_MenuEditor
 
         void CreateEditorData()
         {
-            TPMenuGUIData newEditorData = ScriptableObject.CreateInstance<TPMenuGUIData>();
-            AssetDatabase.CreateAsset(newEditorData, "Assets/TP_Creator/TP_MenuCreator/EditorResources/MenuEditorGUIData.asset");
+            TPOptionsGUIData newEditorData = ScriptableObject.CreateInstance<TPOptionsGUIData>();
+            AssetDatabase.CreateAsset(newEditorData, "Assets/TP_Creator/TP_OptionsCreator/EditorResources/OptionsEditorGUIData.asset");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             EditorData = newEditorData;
@@ -124,11 +124,11 @@ namespace TP_MenuEditor
 
         static void InitCreator()
         {
-            if (MenuCreator == null)
+            if (OptionsCreator == null)
             {
-                MenuCreator = FindObjectOfType<TPMenuCreator>();
+                OptionsCreator = FindObjectOfType<TPOptionsCreator>();
 
-                if (MenuCreator != null)
+                if (OptionsCreator != null)
                     UpdateManager();
             }
         }
@@ -137,8 +137,8 @@ namespace TP_MenuEditor
         {
             if (EditorApplication.isPlaying)
             {
-                if (TPMenuToolsWindow.window)
-                    TPMenuToolsWindow.window.Close();
+                if (TPOptionsToolsWindow.window)
+                    TPOptionsToolsWindow.window.Close();
                 this.Close();
             }
             DrawLayouts();
@@ -161,16 +161,16 @@ namespace TP_MenuEditor
         void DrawHeader()
         {
             GUILayout.BeginArea(headerSection);
-            GUILayout.Label("TP Menu Creator - Manage your Main Menu!", skin.GetStyle("HeaderLabel"));
+            GUILayout.Label("TP Options Creator - Manage your Options Menu!", skin.GetStyle("HeaderLabel"));
             GUILayout.EndArea();
         }
 
         void DrawManager()
         {
             GUILayout.BeginArea(managerSection);
-            GUILayout.Label("Menu Manager - Core", skin.box);
+            GUILayout.Label("Options Manager - Core", skin.box);
 
-            if (MenuCreator == null)
+            if (OptionsCreator == null)
             {
                 InitializeManager();
             }
@@ -179,7 +179,7 @@ namespace TP_MenuEditor
                 SpawnEmpty();
                 ResetManager();
 
-                if (GUILayout.Button("Initialize and update", skin.button, GUILayout.Height(70)))
+                if (GUILayout.Button("Refresh and update", skin.button, GUILayout.Height(70)))
                 {
                     UpdateManager();
                 }
@@ -192,37 +192,37 @@ namespace TP_MenuEditor
         {
             if (GUILayout.Button("Initialize New Manager", skin.button, GUILayout.Height(60)))
             {
-                GameObject go = (new GameObject("TP_MenuManager", typeof(TPMenuCreator)));
-                MenuCreator = go.GetComponent<TPMenuCreator>();
+                GameObject go = (new GameObject("TP_OptionsManager", typeof(TPOptionsCreator)));
+                OptionsCreator = go.GetComponent<TPOptionsCreator>();
                 UpdateManager();
-                Debug.Log("Menu Manager created!");
+                Debug.Log("Options Manager created!");
             }
 
             if (GUILayout.Button("Initialize Exist Manager", skin.button, GUILayout.Height(60)))
                 existManager = !existManager;
 
             if (existManager)
-                MenuCreator = EditorGUILayout.ObjectField(MenuCreator, typeof(TPMenuCreator), true,
-                    GUILayout.Height(30)) as TPMenuCreator;
+                OptionsCreator = EditorGUILayout.ObjectField(OptionsCreator, typeof(TPOptionsCreator), true,
+                    GUILayout.Height(30)) as TPOptionsCreator;
         }
 
         void ResetManager()
         {
             if (GUILayout.Button("Reset Manager", skin.button, GUILayout.Height(45)))
-                MenuCreator = null;
+                OptionsCreator = null;
         }
 
         void SpawnEmpty()
         {
-            if (GUILayout.Button("Spawn empty Menu", skin.button, GUILayout.Height(50)))
+            if (GUILayout.Button("Spawn empty Options", skin.button, GUILayout.Height(50)))
             {
-                if (EditorData.MenuPrefab == null)
+                if (EditorData.OptionsPrefab == null)
                 {
-                    Debug.LogError("There is no menu prefab in EditorGUIData file!");
+                    Debug.LogError("There is no options prefab in EditorGUIData file!");
                     return;
                 }
-                Instantiate(EditorData.MenuPrefab);
-                Debug.Log("Menu example Created");
+                Instantiate(EditorData.OptionsPrefab);
+                Debug.Log("Options example Created");
             }
         }
 
@@ -230,33 +230,29 @@ namespace TP_MenuEditor
         {
             if(creator != null)
                 creator.ApplyModifiedProperties();
-            if(MenuCreator)
-                MenuCreator.Refresh();
+            //if(OptionsCreator)
+            //    OptionsCreator.Refresh();
         }
 
         void DrawTools()
         {
 
             GUILayout.BeginArea(toolSection);
-            GUILayout.Label("Menu Manager - Tools", skin.box);
+            GUILayout.Label("Options Manager - Tools", skin.box);
 
-            if (MenuCreator == null)
+            if (OptionsCreator == null)
             {
                 GUILayout.EndArea();
                 return;
             }
 
-            if (GUILayout.Button("Options Menu", skin.button, GUILayout.Height(60)))
+            if (GUILayout.Button("Options Menu Layout", skin.button, GUILayout.Height(60)))
             {
-                TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.Options);
+                TPOptionsToolsWindow.OpenToolWindow(/*TPMenuToolsWindow.ToolEnum.Options*/);
             }
-            //if (GUILayout.Button("Observers", skin.button, GUILayout.Height(60)))
+            //if (GUILayout.Button("Main Menu", skin.button, GUILayout.Height(60)))
             //{
-            //    TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.Observers);
-            //}
-            //if (GUILayout.Button("Layout", skin.button, GUILayout.Height(60)))
-            //{
-            //    TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.Layout);
+            //    TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.MainMenu);
             //}
             GUILayout.EndArea();
         }

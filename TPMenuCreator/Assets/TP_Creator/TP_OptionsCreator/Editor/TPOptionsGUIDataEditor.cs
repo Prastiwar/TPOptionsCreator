@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace TP_MenuEditor
+namespace TP_OptionsEditor
 {
-    [CustomEditor(typeof(TPMenuGUIData))]
-    public class TPTooltipGUIDataEditor : ScriptlessMenuEditor
+    [CustomEditor(typeof(TPOptionsGUIData))]
+    public class TPOptionsGUIDataEditor : ScriptlessOptionsEditor
     {
-        TPMenuGUIData TPMenuData;
+        TPOptionsGUIData TPMenuData;
 
         void OnEnable()
         {
-            TPMenuData = (TPMenuGUIData)target;
+            TPMenuData = (TPOptionsGUIData)target;
         }
 
         public override void OnInspectorGUI()
@@ -23,8 +23,8 @@ namespace TP_MenuEditor
 
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField("Empty Menu Prefab");
-            TPMenuData.MenuPrefab = (EditorGUILayout.ObjectField(TPMenuData.MenuPrefab, typeof(GameObject), true) as GameObject);
+            EditorGUILayout.LabelField("Empty Options Menu Prefab");
+            TPMenuData.OptionsPrefab = (EditorGUILayout.ObjectField(TPMenuData.OptionsPrefab, typeof(GameObject), true) as GameObject);
 
             if (GUI.changed)
                 EditorUtility.SetDirty(TPMenuData);

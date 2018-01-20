@@ -9,7 +9,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e42333fb1c4f33545963d39a3cf9b075, type: 3}
-  m_Name: MenuEditorGUIData
+  m_Name: OptionsEditorGUIData
   m_EditorClassIdentifier: 
   GUISkin: {fileID: 11400000, guid: b157fd294d4e64041a4864d59ad33e7a, type: 2}
-  MenuPrefab: {fileID: 0}
+  OptionsPrefab: {fileID: 1897116156946234, guid: 4b87349d0beaf4340a1773ac97af3ea5,
+    type: 2}
