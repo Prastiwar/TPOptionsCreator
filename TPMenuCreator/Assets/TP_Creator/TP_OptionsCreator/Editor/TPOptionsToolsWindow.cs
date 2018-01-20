@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using TP_Options;
 using UnityEditor.SceneManagement;
 
 namespace TP_OptionsEditor
@@ -231,7 +230,8 @@ namespace TP_OptionsEditor
                 }
                 else
                 {
-                    if (!PrefabUtility.GetPrefabObject(DragAndDrop.objectReferences[0]))
+                    if ((!PrefabUtility.GetPrefabObject(DragAndDrop.objectReferences[0]) && DragAndDrop.paths.Length < 1) ||
+                        (!PrefabUtility.GetPrefabObject(DragAndDrop.objectReferences[0]) && DragAndDrop.paths.Length < 1))
                     {
                         Debug.LogError("You can't drag no-prefab object!");
                         return;

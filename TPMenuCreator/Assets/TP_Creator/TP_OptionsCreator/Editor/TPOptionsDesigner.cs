@@ -11,12 +11,12 @@ namespace TP_OptionsEditor
         public static TPOptionsDesigner window;
         static string currentScene;
 
-        [MenuItem("TP_Creator/TP_MenuCreator")]
+        [MenuItem("TP_Creator/TP_OptionsCreator")]
         public static void OpenWindow()
         {
             if (EditorApplication.isPlaying)
             {
-                Debug.Log("You can't change Menu Designer runtime!");
+                Debug.Log("You can't change Options Menu Designer runtime!");
                 return;
             }
             window = (TPOptionsDesigner)GetWindow(typeof(TPOptionsDesigner));

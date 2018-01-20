@@ -250,7 +250,7 @@ namespace TP_Options
                     option = (i * 2).ToString() + "x Multi Sampling";
                     break;
                 case 3:
-                    option = (8).ToString() + "x Multi Sampling";
+                    option = "8x Multi Sampling";
                     break;
                 default:
                     break;
@@ -304,7 +304,14 @@ namespace TP_Options
 
         void SetQuality(int index)
         {
+            bool _full = Screen.fullScreen;
+            Resolution _res = Screen.currentResolution;
+            bool _vsync = QualitySettings.vSyncCount == 0 ? false : true;
+
             QualitySettings.SetQualityLevel(index);
+            
+            Screen.SetResolution(_res.width, _res.height, Screen.fullScreen);
+            QualitySettings.vSyncCount = _vsync ? 1 : 0;
             Initialize();
         }
 
@@ -328,6 +335,7 @@ namespace TP_Options
                 default:
                     break;
             }
+            aliasingDropdown.value = index;
         }
 
         void SetShadowsQuality(int index)
@@ -385,10 +393,13 @@ namespace TP_Options
             int _shad = (int)QualitySettings.shadows;
             int _ani = (int)QualitySettings.anisotropicFiltering;
             int _anti = QualitySettings.antiAliasing;
+            Resolution _res = Screen.currentResolution;
             bool _vsync = QualitySettings.vSyncCount == 0 ? false : true;
+            bool _full = Screen.fullScreen;
 
             QualitySettings.SetQualityLevel(CustomQualityIndex);
-
+            Screen.fullScreen = _full;
+            Screen.SetResolution(_res.width, _res.height, Screen.fullScreen);
             QualitySettings.masterTextureLimit = _tex;
             QualitySettings.shadowResolution = (ShadowResolution)_shadRes;
             QualitySettings.shadows = (ShadowQuality)_shad;
