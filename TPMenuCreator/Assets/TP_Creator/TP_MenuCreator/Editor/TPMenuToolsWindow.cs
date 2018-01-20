@@ -16,19 +16,6 @@ namespace TP_MenuEditor
         }
 
         static ToolEnum tool;
-
-        enum Options
-        {
-            Resolution,
-            Quality,
-            Aliasing,
-            ShadowQuality,
-            Shadow,
-            Fullscreen,
-            VSync,
-            FXVolume,
-            MusicVolume
-        }
         //string[] enumNamesList = System.Enum.GetNames(typeof(TPTooltipObserver.ToolTipType));
 
         SerializedObject OptionsLayout;
@@ -45,8 +32,35 @@ namespace TP_MenuEditor
         SerializedProperty layoutFXText;
         SerializedProperty layoutMusicText;
         SerializedProperty layoutAudioMixer;
-
-        //GUIContent content = new GUIContent("You can drag there multiple observers   |  Size");
+        SerializedProperty layoutTextureDrop;
+        SerializedProperty layoutAnisotropicToggle;
+        SerializedProperty layoutMusicButton;
+        SerializedProperty layoutFXButton;
+        SerializedProperty layoutMusicONSprite;
+        SerializedProperty layoutFXONSprite;
+        SerializedProperty layoutMusicOffSprite;
+        SerializedProperty layoutFXOffSprite;
+        
+        GUIContent content0 = new GUIContent("Resolution Dropdown");
+        GUIContent content1 = new GUIContent("QualityLevel Dropdown");
+        GUIContent content2 = new GUIContent("Antialiasing Dropdown");
+        GUIContent content3 = new GUIContent("ShadowQuality Dropdown");
+        GUIContent content4 = new GUIContent("Shadow Dropdown");
+        GUIContent content5 = new GUIContent("Fullscreen Toggle");
+        GUIContent content6 = new GUIContent("VSync Toggle");
+        GUIContent content7 = new GUIContent("Audio Mixer for Volumes");
+        GUIContent content8 = new GUIContent("FXVolume Slider");
+        GUIContent content9 = new GUIContent("FX's property name");
+        GUIContent content10 = new GUIContent("MusicVolume Slider");
+        GUIContent content11 = new GUIContent("Musics's property name");
+        GUIContent content12 = new GUIContent("Texture's Dropdown");
+        GUIContent content13 = new GUIContent("Anisotropic Toggle");
+        GUIContent content14 = new GUIContent("Music Button");
+        GUIContent content15 = new GUIContent("Music Sprite Off");
+        GUIContent content16 = new GUIContent("Music Sprite ON");
+        GUIContent content17 = new GUIContent("FX Button");
+        GUIContent content18 = new GUIContent("FX Sprite Off");
+        GUIContent content19 = new GUIContent("FX Sprite ON");
 
         Texture2D mainTexture;
         Texture2D tooltipTexture;
@@ -57,10 +71,10 @@ namespace TP_MenuEditor
 
         Rect mainRect;
 
-        bool[] booleans = new bool[9];
+        bool[] booleans = new bool[13];
         bool canChange;
 
-        static float windowSize = 515;
+        static float windowSize = 520;
         static string currentScene;
 
         public static void OpenToolWindow(ToolEnum _tool)
@@ -120,6 +134,14 @@ namespace TP_MenuEditor
             layoutFXText = OptionsLayout.FindProperty("mixerFXText");
             layoutMusicText = OptionsLayout.FindProperty("mixerMusicText");
             layoutAudioMixer = OptionsLayout.FindProperty("AudioMixer");
+            layoutTextureDrop = OptionsLayout.FindProperty("textureDropdown");
+            layoutAnisotropicToggle = OptionsLayout.FindProperty("anisotropicToggle");
+            layoutMusicButton = OptionsLayout.FindProperty("musicButton");
+            layoutFXButton = OptionsLayout.FindProperty("fxButton");
+            layoutMusicONSprite = OptionsLayout.FindProperty("musicImageOn");
+            layoutFXONSprite = OptionsLayout.FindProperty("fxImageOn");
+            layoutMusicOffSprite = OptionsLayout.FindProperty("musicImageOff");
+            layoutFXOffSprite = OptionsLayout.FindProperty("fxImageOff");
         }
 
         void InitTextures()
@@ -153,54 +175,7 @@ namespace TP_MenuEditor
                     break;
             }
         }
-
-        void Check(SerializedProperty list, int index)
-        {
-            int length = list.arraySize;
-            for (int i = 0; i < length; i++)
-            {
-                if (i == index)
-                    continue;
-                if (list.GetArrayElementAtIndex(index).objectReferenceValue == list.GetArrayElementAtIndex(i).objectReferenceValue)
-                {
-                    list.GetArrayElementAtIndex(i).objectReferenceValue = null;
-                }
-            }
-        }
-
-        void RemoveAsset(SerializedProperty list, int index)
-        {
-            if (GUILayout.Button("Remove", GUILayout.Width(60)))
-            {
-                if (list.GetArrayElementAtIndex(index).objectReferenceValue != null || index == list.arraySize - 1)
-                {
-                    if (list.GetArrayElementAtIndex(index).objectReferenceValue != null)
-                    {
-                        //TPTooltipObserver script = (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>();
-                        //DestroyImmediate(script);
-                        list.GetArrayElementAtIndex(index).objectReferenceValue = null;
-                    }
-                    list.DeleteArrayElementAtIndex(index);
-                }
-            }
-        }
-
-        void AddObserver()
-        {
-            //observerOBJList.arraySize++;
-            //observerOBJList.serializedObject.ApplyModifiedProperties();
-            TPMenuDesigner.UpdateManager();
-        }
-
-        void EditAsset(SerializedProperty list, int index)
-        {
-            if (list.GetArrayElementAtIndex(index).objectReferenceValue != null)
-                if (GUILayout.Button("Edit", GUILayout.Width(35)))
-                {
-                    AssetDatabase.OpenAsset(list.GetArrayElementAtIndex(index).objectReferenceValue);
-                }
-        }
-
+        
         void DrawMenuTool()
         {
             
@@ -208,31 +183,42 @@ namespace TP_MenuEditor
 
         void DrawOptionsToggleButtons()
         {
+            EditorGUILayout.Separator();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Toggle Resolution Setter", GUILayout.Width(250)))
+            if (GUILayout.Button("Toggle FX volume Set", GUILayout.Width(250)))
+                SetBool(7);
+            if (GUILayout.Button("Toggle Music volume Set", GUILayout.Width(250)))
+                SetBool(8);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle Antialiasing Set", GUILayout.Width(166)))
+                SetBool(2);
+            if (GUILayout.Button("Toggle ShadowQuality Set", GUILayout.Width(166)))
+                SetBool(3);
+            if (GUILayout.Button("Toggle Shadows Set", GUILayout.Width(166)))
+                SetBool(4);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle Texture Set", GUILayout.Width(166)))
+                SetBool(9);
+            if (GUILayout.Button("Toggle Resolution Set", GUILayout.Width(166)))
                 SetBool(0);
-            if (GUILayout.Button("Toggle Quality Setter", GUILayout.Width(250)))
+            if (GUILayout.Button("Toggle Quality Set", GUILayout.Width(166)))
                 SetBool(1);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Toggle Antialiasing Setter", GUILayout.Width(250)))
-                SetBool(2);
-            if (GUILayout.Button("Toggle Shadow quality Setter", GUILayout.Width(250)))
-                SetBool(3);
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Toggle Shadow Setter", GUILayout.Width(250)))
-                SetBool(4);
-            if (GUILayout.Button("Toggle Fullscreen Setter", GUILayout.Width(250)))
+            if (GUILayout.Button("Toggle VSync Set", GUILayout.Width(166)))
+                SetBool(6);
+            if (GUILayout.Button("Toggle Anisotropic Set", GUILayout.Width(166)))
+                SetBool(10);
+            if (GUILayout.Button("Toggle Fullscreen Set", GUILayout.Width(166)))
                 SetBool(5);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Toggle VSync Setter", GUILayout.Width(166)))
-                SetBool(6);
-            if (GUILayout.Button("Toggle FX volume Setter", GUILayout.Width(166)))
-                SetBool(7);
-            if (GUILayout.Button("Toggle Music volume Setter", GUILayout.Width(166)))
-                SetBool(8);
+            if (GUILayout.Button("Toggle Music On/Off Set", GUILayout.Width(250)))
+                SetBool(11);
+            if (GUILayout.Button("Toggle FX On/Off Set", GUILayout.Width(250)))
+                SetBool(12);
             EditorGUILayout.EndHorizontal();
         }
 
@@ -252,71 +238,116 @@ namespace TP_MenuEditor
 
             DrawOptionsToggleButtons();
 
+            if (Event.current.type == EventType.DragPerform)
+            {
+                if (DragAndDrop.objectReferences.Length > 1)
+                {
+                    return;
+                }
+                else
+                {
+                    if (!PrefabUtility.GetPrefabObject(DragAndDrop.objectReferences[0]))
+                    {
+                        Debug.LogError("You can't drag no-prefab object!");
+                        return;
+                    }
+                }
+            }
             EditorGUILayout.BeginVertical();
             
-            EditorGUILayout.Space();
             if (booleans[0])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Resolution Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutResDrop, new GUIContent("Resolutio Dropdown"));
+                EditorGUILayout.PropertyField(layoutResDrop, content0);
             }
-            EditorGUILayout.Space();
             if (booleans[1])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Quality Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutQualDrop, new GUIContent("QualityLevel Dropdown"));
+                EditorGUILayout.PropertyField(layoutQualDrop, content1);
             }
-            EditorGUILayout.Space();
             if (booleans[2])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Antialiasing Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutAliasingDrop, new GUIContent("Antialiasing Dropdown"));
+                EditorGUILayout.PropertyField(layoutAliasingDrop, content2);
             }
-            EditorGUILayout.Space();
             if (booleans[3])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Shadow quality Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutShadowQualDrop, new GUIContent("ShadowQuality Dropdown"));
+                EditorGUILayout.PropertyField(layoutShadowQualDrop, content3);
             }
-            EditorGUILayout.Space();
             if (booleans[4])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Shadow Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutShadowDrop, new GUIContent("Shadow Dropdown"));
+                EditorGUILayout.PropertyField(layoutShadowDrop, content4);
             }
-            EditorGUILayout.Space();
             if (booleans[5])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Fullscreen Toggle", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutFullScreen, new GUIContent("Fullscreen Toggle"));
+                EditorGUILayout.PropertyField(layoutFullScreen, content5);
             }
-            EditorGUILayout.Space();
             if (booleans[6])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("VSync Toggle", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutVSync, new GUIContent("VSync Toggle"));
+                EditorGUILayout.PropertyField(layoutVSync, content6);
             }
-            EditorGUILayout.Space();
             if (booleans[7] || booleans[8])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Audio Mixer", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutAudioMixer, new GUIContent("Audio Mixer for Volumes"));
+                EditorGUILayout.PropertyField(layoutAudioMixer, content7);
             }
-            EditorGUILayout.Space();
             if (booleans[7])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("FX volume Slider", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutFXSlider, new GUIContent("FXVolume Slider"));
-                EditorGUILayout.PropertyField(layoutFXText, new GUIContent("FX's property name"));
+                EditorGUILayout.PropertyField(layoutFXSlider, content8);
+                EditorGUILayout.PropertyField(layoutFXText, content9);
             }
-            EditorGUILayout.Space();
             if (booleans[8])
             {
+                EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Music volume Slider", TPMenuDesigner.skin.GetStyle("TipLabel"));
-                EditorGUILayout.PropertyField(layoutMusicSlider, new GUIContent("MusicVolume Slider"));
-                EditorGUILayout.PropertyField(layoutMusicText, new GUIContent("Musics's property name"));
+                EditorGUILayout.PropertyField(layoutMusicSlider, content10);
+                EditorGUILayout.PropertyField(layoutMusicText, content11);
+            }
+            if (booleans[9])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Texture Quality Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutTextureDrop, content12);
+            }
+            if (booleans[10])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Anisotropic Toggle", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutAnisotropicToggle, content13);
+            }
+            if (booleans[11])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Music Button", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutMusicButton, content14);
+                EditorGUILayout.PropertyField(layoutMusicOffSprite, content15);
+                EditorGUILayout.PropertyField(layoutMusicONSprite, content16);
+            }
+            if (booleans[12])
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("FX Button", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutFXButton, content17);
+                EditorGUILayout.PropertyField(layoutFXOffSprite, content18);
+                EditorGUILayout.PropertyField(layoutFXONSprite, content19);
             }
 
+            if (GUI.changed)
+                OptionsLayout.ApplyModifiedProperties();
 
             EditorGUILayout.EndVertical();
         }

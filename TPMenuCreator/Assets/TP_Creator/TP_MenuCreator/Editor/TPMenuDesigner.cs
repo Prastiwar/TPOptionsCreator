@@ -179,7 +179,7 @@ namespace TP_MenuEditor
                 SpawnEmpty();
                 ResetManager();
 
-                if (GUILayout.Button("Refresh and update", skin.button, GUILayout.Height(70)))
+                if (GUILayout.Button("Initialize and update", skin.button, GUILayout.Height(70)))
                 {
                     UpdateManager();
                 }
@@ -228,8 +228,6 @@ namespace TP_MenuEditor
 
         public static void UpdateManager()
         {
-            if(MenuCreator.OptionsLayout != null)
-                MenuCreator.OptionsLayout.Refresh();
             if(creator != null)
                 creator.ApplyModifiedProperties();
             if(MenuCreator)
