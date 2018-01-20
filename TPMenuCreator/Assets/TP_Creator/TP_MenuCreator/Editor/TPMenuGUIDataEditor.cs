@@ -24,7 +24,7 @@ namespace TP_MenuEditor
             EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Empty Menu Prefab");
-            TPMenuData.TooltipPrefab = (EditorGUILayout.ObjectField(TPMenuData.TooltipPrefab, typeof(GameObject), true) as GameObject);
+            TPMenuData.MenuPrefab = (EditorGUILayout.ObjectField(TPMenuData.MenuPrefab, typeof(GameObject), true) as GameObject);
 
             if (GUI.changed)
                 EditorUtility.SetDirty(TPMenuData);

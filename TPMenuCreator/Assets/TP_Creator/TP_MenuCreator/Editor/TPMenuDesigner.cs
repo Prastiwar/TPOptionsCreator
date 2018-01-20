@@ -11,12 +11,12 @@ namespace TP_MenuEditor
         public static TPMenuDesigner window;
         static string currentScene;
 
-        [MenuItem("TP_Creator/TP_TooltipCreator")]
+        [MenuItem("TP_Creator/TP_MenuCreator")]
         public static void OpenWindow()
         {
             if (EditorApplication.isPlaying)
             {
-                Debug.Log("You can't change Tooltip Designer runtime!");
+                Debug.Log("You can't change Menu Designer runtime!");
                 return;
             }
             window = (TPMenuDesigner)GetWindow(typeof(TPMenuDesigner));
@@ -31,15 +31,15 @@ namespace TP_MenuEditor
         {
             if (currentScene != EditorSceneManager.GetActiveScene().name)
             {
-                if (TPTooltipToolsWindow.window)
-                    TPTooltipToolsWindow.window.Close();
+                if (TPMenuToolsWindow.window)
+                    TPMenuToolsWindow.window.Close();
                 if (window)
                     window.Close();
             }
         }
 
-        public static TPTooltipGUIData EditorData;
-        public static TPTooltipCreator TooltipCreator;
+        public static TPMenuGUIData EditorData;
+        public static TPMenuCreator MenuCreator;
         public static GUISkin skin;
 
         Texture2D headerTexture;
@@ -61,15 +61,15 @@ namespace TP_MenuEditor
             InitTextures();
             InitCreator();
 
-            if(TooltipCreator)
-                creator = new SerializedObject(TooltipCreator);
+            if(MenuCreator)
+                creator = new SerializedObject(MenuCreator);
         }
 
         void InitEditorData()
         {
             EditorData = AssetDatabase.LoadAssetAtPath(
-                   "Assets/TP_Creator/TP_TooltipCreator/EditorResources/TooltipEditorGUIData.asset",
-                   typeof(TPTooltipGUIData)) as TPTooltipGUIData;
+                   "Assets/TP_Creator/TP_MenuCreator/EditorResources/MenuEditorGUIData.asset",
+                   typeof(TPMenuGUIData)) as TPMenuGUIData;
             
             if (EditorData == null)
                 CreateEditorData();
@@ -83,12 +83,12 @@ namespace TP_MenuEditor
         {
             if (EditorData.GUISkin == null)
                 EditorData.GUISkin = AssetDatabase.LoadAssetAtPath(
-                      "Assets/TP_Creator/TP_TooltipCreator/EditorResources/TPTooltipGUISkin.guiskin",
+                      "Assets/TP_Creator/TP_MenuCreator/EditorResources/TPMenuGUISkin.guiskin",
                       typeof(GUISkin)) as GUISkin;
 
-            if (EditorData.TooltipPrefab == null)
-                EditorData.TooltipPrefab = AssetDatabase.LoadAssetAtPath(
-                    "Assets/TP_Creator/TP_TooltipCreator/EditorResources/TooltipCanvas.prefab",
+            if (EditorData.MenuPrefab == null)
+                EditorData.MenuPrefab = AssetDatabase.LoadAssetAtPath(
+                    "Assets/TP_Creator/TP_MenuCreator/EditorResources/MenuCanvas.prefab",
                     typeof(GameObject)) as GameObject;
 
             EditorUtility.SetDirty(EditorData);
@@ -96,8 +96,8 @@ namespace TP_MenuEditor
 
         void CreateEditorData()
         {
-            TPTooltipGUIData newEditorData = ScriptableObject.CreateInstance<TPTooltipGUIData>();
-            AssetDatabase.CreateAsset(newEditorData, "Assets/TP_Creator/TP_TooltipCreator/EditorResources/TooltipEditorGUIData.asset");
+            TPMenuGUIData newEditorData = ScriptableObject.CreateInstance<TPMenuGUIData>();
+            AssetDatabase.CreateAsset(newEditorData, "Assets/TP_Creator/TP_MenuCreator/EditorResources/MenuEditorGUIData.asset");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             EditorData = newEditorData;
@@ -124,11 +124,11 @@ namespace TP_MenuEditor
 
         static void InitCreator()
         {
-            if (TooltipCreator == null)
+            if (MenuCreator == null)
             {
-                TooltipCreator = FindObjectOfType<TPTooltipCreator>();
+                MenuCreator = FindObjectOfType<TPMenuCreator>();
 
-                if (TooltipCreator != null)
+                if (MenuCreator != null)
                     UpdateManager();
             }
         }
@@ -137,8 +137,8 @@ namespace TP_MenuEditor
         {
             if (EditorApplication.isPlaying)
             {
-                if (TPTooltipToolsWindow.window)
-                    TPTooltipToolsWindow.window.Close();
+                if (TPMenuToolsWindow.window)
+                    TPMenuToolsWindow.window.Close();
                 this.Close();
             }
             DrawLayouts();
@@ -161,16 +161,16 @@ namespace TP_MenuEditor
         void DrawHeader()
         {
             GUILayout.BeginArea(headerSection);
-            GUILayout.Label("TP Tooltip Creator - Manage your Tooltip!", skin.GetStyle("HeaderLabel"));
+            GUILayout.Label("TP Menu Creator - Manage your Main Menu!", skin.GetStyle("HeaderLabel"));
             GUILayout.EndArea();
         }
 
         void DrawManager()
         {
             GUILayout.BeginArea(managerSection);
-            GUILayout.Label("Tooltip Manager - Core", skin.box);
+            GUILayout.Label("Menu Manager - Core", skin.box);
 
-            if (TooltipCreator == null)
+            if (MenuCreator == null)
             {
                 InitializeManager();
             }
@@ -192,74 +192,74 @@ namespace TP_MenuEditor
         {
             if (GUILayout.Button("Initialize New Manager", skin.button, GUILayout.Height(60)))
             {
-                GameObject go = (new GameObject("TP_TooltipManager", typeof(TPTooltipCreator)));
-                TooltipCreator = go.GetComponent<TPTooltipCreator>();
+                GameObject go = (new GameObject("TP_MenuManager", typeof(TPMenuCreator)));
+                MenuCreator = go.GetComponent<TPMenuCreator>();
                 UpdateManager();
-                Debug.Log("Tooltip Manager created!");
+                Debug.Log("Menu Manager created!");
             }
 
             if (GUILayout.Button("Initialize Exist Manager", skin.button, GUILayout.Height(60)))
                 existManager = !existManager;
 
             if (existManager)
-                TooltipCreator = EditorGUILayout.ObjectField(TooltipCreator, typeof(TPTooltipCreator), true,
-                    GUILayout.Height(30)) as TPTooltipCreator;
+                MenuCreator = EditorGUILayout.ObjectField(MenuCreator, typeof(TPMenuCreator), true,
+                    GUILayout.Height(30)) as TPMenuCreator;
         }
 
         void ResetManager()
         {
             if (GUILayout.Button("Reset Manager", skin.button, GUILayout.Height(45)))
-                TooltipCreator = null;
+                MenuCreator = null;
         }
 
         void SpawnEmpty()
         {
-            if (GUILayout.Button("Spawn empty Tooltip Canvas", skin.button, GUILayout.Height(50)))
+            if (GUILayout.Button("Spawn empty Menu", skin.button, GUILayout.Height(50)))
             {
-                if (EditorData.TooltipPrefab == null)
+                if (EditorData.MenuPrefab == null)
                 {
-                    Debug.LogError("There is no tooltip prefab in EditorGUIData file!");
+                    Debug.LogError("There is no menu prefab in EditorGUIData file!");
                     return;
                 }
-                Instantiate(EditorData.TooltipPrefab);
-                Debug.Log("Tooltip example Created");
+                Instantiate(EditorData.MenuPrefab);
+                Debug.Log("Menu example Created");
             }
         }
 
         public static void UpdateManager()
         {
-            if(TooltipCreator.TooltipLayout != null)
-                TooltipCreator.TooltipLayout.Refresh();
+            if(MenuCreator.OptionsLayout != null)
+                MenuCreator.OptionsLayout.Refresh();
             if(creator != null)
                 creator.ApplyModifiedProperties();
-            if(TooltipCreator)
-                TooltipCreator.Refresh();
+            if(MenuCreator)
+                MenuCreator.Refresh();
         }
 
         void DrawTools()
         {
 
             GUILayout.BeginArea(toolSection);
-            GUILayout.Label("Tooltip Manager - Tools", skin.box);
+            GUILayout.Label("Menu Manager - Tools", skin.box);
 
-            if (TooltipCreator == null)
+            if (MenuCreator == null)
             {
                 GUILayout.EndArea();
                 return;
             }
 
-            if (GUILayout.Button("Dynamic Offset", skin.button, GUILayout.Height(60)))
+            if (GUILayout.Button("Options Menu", skin.button, GUILayout.Height(60)))
             {
-                TPTooltipToolsWindow.OpenToolWindow(TPTooltipToolsWindow.ToolEnum.Preview);
+                TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.Options);
             }
-            if (GUILayout.Button("Observers", skin.button, GUILayout.Height(60)))
-            {
-                TPTooltipToolsWindow.OpenToolWindow(TPTooltipToolsWindow.ToolEnum.Observers);
-            }
-            if (GUILayout.Button("Layout", skin.button, GUILayout.Height(60)))
-            {
-                TPTooltipToolsWindow.OpenToolWindow(TPTooltipToolsWindow.ToolEnum.Layout);
-            }
+            //if (GUILayout.Button("Observers", skin.button, GUILayout.Height(60)))
+            //{
+            //    TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.Observers);
+            //}
+            //if (GUILayout.Button("Layout", skin.button, GUILayout.Height(60)))
+            //{
+            //    TPMenuToolsWindow.OpenToolWindow(TPMenuToolsWindow.ToolEnum.Layout);
+            //}
             GUILayout.EndArea();
         }
 

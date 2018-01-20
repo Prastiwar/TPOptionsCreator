@@ -11,27 +11,42 @@ namespace TP_MenuEditor
         public static TPMenuToolsWindow window;
         public enum ToolEnum
         {
-            Preview,
-            Observers,
-            Layout,
+            MainMenu,
+            Options
         }
 
         static ToolEnum tool;
+
+        enum Options
+        {
+            Resolution,
+            Quality,
+            Aliasing,
+            ShadowQuality,
+            Shadow,
+            Fullscreen,
+            VSync,
+            FXVolume,
+            MusicVolume
+        }
         //string[] enumNamesList = System.Enum.GetNames(typeof(TPTooltipObserver.ToolTipType));
 
-        SerializedObject TooltipLayout;
-        SerializedProperty tooltipLayout;
-        SerializedProperty layoutTexts;
-        SerializedProperty layoutImages;
-        SerializedProperty layoutButtons;
-        SerializedProperty layoutTextsParent;
-        SerializedProperty layoutImagesParent;
-        SerializedProperty layoutButtonsParent;
-        
-        SerializedProperty observerOBJList;
-        SerializedProperty offset;
+        SerializedObject OptionsLayout;
+        SerializedProperty _OptionsLayout;
+        SerializedProperty layoutResDrop;
+        SerializedProperty layoutQualDrop;
+        SerializedProperty layoutAliasingDrop;
+        SerializedProperty layoutShadowQualDrop;
+        SerializedProperty layoutShadowDrop;
+        SerializedProperty layoutFullScreen;
+        SerializedProperty layoutVSync;
+        SerializedProperty layoutFXSlider;
+        SerializedProperty layoutMusicSlider;
+        SerializedProperty layoutFXText;
+        SerializedProperty layoutMusicText;
+        SerializedProperty layoutAudioMixer;
 
-        GUIContent content = new GUIContent("You can drag there multiple observers   |  Size");
+        //GUIContent content = new GUIContent("You can drag there multiple observers   |  Size");
 
         Texture2D mainTexture;
         Texture2D tooltipTexture;
@@ -41,17 +56,11 @@ namespace TP_MenuEditor
         Vector2 textureVec;
 
         Rect mainRect;
-        Rect leftUp;
-        Rect leftDown;
-        Rect center;
-        Rect rightUp;
-        Rect rightDown;
 
-        bool toggleItems = false;
-        bool[] showBools = new bool[3];
+        bool[] booleans = new bool[9];
+        bool canChange;
 
-        static float windowSize = 450;
-        static float windowPreviewSize = 600;
+        static float windowSize = 515;
         static string currentScene;
 
         public static void OpenToolWindow(ToolEnum _tool)
@@ -60,21 +69,13 @@ namespace TP_MenuEditor
                 window.Close();
 
             tool = _tool;
-            window = (TPTooltipToolsWindow)GetWindow(typeof(TPTooltipToolsWindow));
+            window = (TPMenuToolsWindow)GetWindow(typeof(TPMenuToolsWindow));
 
             currentScene = EditorSceneManager.GetActiveScene().name;
             EditorApplication.hierarchyWindowChanged += hierarchyWindowChanged;
 
-            if (tool == ToolEnum.Preview)
-            {
-                window.minSize = new Vector2(windowPreviewSize, windowPreviewSize);
-                window.maxSize = new Vector2(windowPreviewSize, windowPreviewSize);
-            }
-            else
-            {
-                window.minSize = new Vector2(windowSize, windowSize);
-                window.maxSize = new Vector2(windowSize, windowSize);
-            }
+            window.minSize = new Vector2(windowSize, windowSize);
+            window.maxSize = new Vector2(windowSize, windowSize);
             window.Show();
         }
 
@@ -82,8 +83,8 @@ namespace TP_MenuEditor
         {
             if (currentScene != EditorSceneManager.GetActiveScene().name)
             {
-                if (TPTooltipDesigner.window)
-                    TPTooltipDesigner.window.Close();
+                if (TPMenuDesigner.window)
+                    TPMenuDesigner.window.Close();
                 if (window)
                     window.Close();
             }
@@ -92,42 +93,33 @@ namespace TP_MenuEditor
         void OnEnable()
         {
             InitTextures();
-            InitRects();
-            if(TPTooltipDesigner.TooltipCreator.TooltipLayout)
-                TooltipLayout = new SerializedObject(TPTooltipDesigner.TooltipCreator.TooltipLayout);
-            observerOBJList = TPTooltipDesigner.creator.FindProperty("OBJObservers");
-            offset = TPTooltipDesigner.creator.FindProperty("Offset");
-            tooltipLayout = TPTooltipDesigner.creator.FindProperty("TooltipLayout");
 
             FindLayoutProperties();
         }
 
         void FindLayoutProperties()
         {
-            if (TooltipLayout == null)
+            if (TPMenuDesigner.MenuCreator.OptionsLayout)
+                OptionsLayout = new SerializedObject(TPMenuDesigner.MenuCreator.OptionsLayout);
+            _OptionsLayout = TPMenuDesigner.creator.FindProperty("OptionsLayout");
+
+            if (OptionsLayout != null)
+                canChange = true;
+            else
                 return;
 
-            layoutTexts = TooltipLayout.FindProperty("Texts");
-            layoutImages = TooltipLayout.FindProperty("Images");
-            layoutButtons = TooltipLayout.FindProperty("Buttons");
-            layoutTextsParent = TooltipLayout.FindProperty("TextsParent");
-            layoutImagesParent = TooltipLayout.FindProperty("ImagesParent");
-            layoutButtonsParent = TooltipLayout.FindProperty("ButtonsParent");
-
-            toggleItems = tooltipLayout.objectReferenceValue != null ? true : false;
-        }
-
-        void InitRects()
-        {
-            float boxSize = 70;
-            float size = windowPreviewSize - boxSize;
-            float gap = 20;
-
-            leftUp = new Rect(gap, gap, boxSize, boxSize);
-            leftDown = new Rect(gap, size - 60, boxSize, boxSize);
-            center = new Rect((size - gap) / 2, (size - boxSize) / 2, boxSize, boxSize);
-            rightUp = new Rect(size - gap, gap, boxSize, boxSize);
-            rightDown = new Rect(size - gap, size - 60, boxSize, boxSize);
+            layoutResDrop = OptionsLayout.FindProperty("resDropdown");
+            layoutQualDrop = OptionsLayout.FindProperty("qualityDropdown");
+            layoutAliasingDrop = OptionsLayout.FindProperty("aliasingDropdown");
+            layoutShadowQualDrop = OptionsLayout.FindProperty("shadowQualDropdown");
+            layoutShadowDrop = OptionsLayout.FindProperty("shadowDropdown");
+            layoutFullScreen = OptionsLayout.FindProperty("fullscreenToggle");
+            layoutVSync = OptionsLayout.FindProperty("vSyncToggle");
+            layoutFXSlider = OptionsLayout.FindProperty("fxSlider");
+            layoutMusicSlider = OptionsLayout.FindProperty("musicSlider");
+            layoutFXText = OptionsLayout.FindProperty("mixerFXText");
+            layoutMusicText = OptionsLayout.FindProperty("mixerMusicText");
+            layoutAudioMixer = OptionsLayout.FindProperty("AudioMixer");
         }
 
         void InitTextures()
@@ -136,30 +128,7 @@ namespace TP_MenuEditor
             mainTexture = new Texture2D(1, 1);
             mainTexture.SetPixel(0, 0, color);
             mainTexture.Apply();
-
-            InitPreviewTextures();
         } 
-
-        void InitPreviewTextures()
-        {
-            if (TPTooltipDesigner.TooltipCreator.TooltipLayout == null)
-            {
-                if(tool == ToolEnum.Preview) Debug.LogError("No layout loaded! Change it in 'Layout' tool");
-                return;
-            }
-
-            previewTexture = new Texture2D(100, 100);
-            previewTexture.SetPixel(0, 0, Color.red);
-            previewTexture.Apply();
-            previewTexture = AssetDatabase.LoadAssetAtPath(
-                "Assets/TP_Creator/TP_TooltipCreator/EditorResources/preview.png", typeof(Texture2D)) as Texture2D;
-
-            var panel = TPTooltipDesigner.TooltipCreator.TooltipLayout.PanelTransform.GetComponent<RectTransform>().rect;
-            tooltipTexture = new Texture2D((int)panel.width, (int)panel.height);
-            tooltipTexture.SetPixel(0, 0, Color.white);
-            tooltipTexture.Apply();
-            textureVec = new Vector2(tooltipTexture.width, tooltipTexture.height);
-        }
 
         void OnGUI()
         {
@@ -174,100 +143,15 @@ namespace TP_MenuEditor
         {
             switch (tool)
             {
-                case ToolEnum.Preview:
-                    DrawPreviewTool();
+                case ToolEnum.MainMenu:
+                    DrawMenuTool();
                     break;
-                case ToolEnum.Observers:
-                    DrawObserverTool();
-                    break;
-                case ToolEnum.Layout:
-                    DrawLayoutsTool();
+                case ToolEnum.Options:
+                    DrawOptionsTool();
                     break;
                 default:
                     break;
             }
-        }
-        
-        void DrawObserverTool()
-        {
-            if (observerOBJList == null)
-                return;
-
-            if (GUILayout.Button("Add new", TPTooltipDesigner.EditorData.GUISkin.button))
-            {
-                AddObserver();
-            }
-            if (GUILayout.Button("Automatically find all Observer's", TPTooltipDesigner.EditorData.GUISkin.button))
-            {
-                AutoFindObservers();
-            }
-            if (observerOBJList.arraySize == 0)
-            {
-                EditorGUILayout.HelpBox("No observers loaded!", MessageType.Error);
-                return;
-            }
-
-            EditorGUILayout.LabelField("Observers loaded:", GUILayout.Width(180));
-
-            TPTooltipDesigner.creator.Update();
-            observerOBJList.serializedObject.Update();
-            ShowObservers(observerOBJList);
-        }
-
-        void AutoFindObservers()
-        {
-            TPTooltipObserver[] observersFound = FindObjectsOfType<TPTooltipObserver>();
-            int length = observersFound.Length;
-            observerOBJList.arraySize = length;
-            for (int i = 0; i < length; i++)
-            {
-                observerOBJList.GetArrayElementAtIndex(i).objectReferenceValue = observersFound[i].gameObject;
-                observerOBJList.serializedObject.ApplyModifiedProperties();
-            }
-        }
-
-        void ShowObservers(SerializedProperty list)
-        {
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.PropertyField(list, content, false);
-            if (Event.current.type == EventType.DragPerform && DragAndDrop.objectReferences.Length > 1)
-                return;
-
-            EditorGUILayout.PropertyField(list.FindPropertyRelative("Array.size"), GUIContent.none, GUILayout.Width(90));
-            GUILayout.EndHorizontal();
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("", GUILayout.Width(175));
-            EditorGUILayout.LabelField("Is Observing?");
-            GUILayout.EndHorizontal();
-            int length = list.arraySize;
-            for (int i = 0; i < length; i++)
-            {
-                GUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(list.GetArrayElementAtIndex(i), GUIContent.none);
-                ToggleObserving(list, i);
-                Check(list, i);
-                SetType(list, i);
-                EditAsset(list, i);
-                RemoveAsset(list, i);
-                GUILayout.EndHorizontal();
-            }
-            if (GUI.changed)
-                observerOBJList.serializedObject.ApplyModifiedProperties();
-        }
-
-        void ToggleObserving(SerializedProperty list, int index)
-        {
-            if (list.GetArrayElementAtIndex(index).objectReferenceValue == null ||
-                (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>() == null)
-                return;
-
-            (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>().IsObserving =
-                EditorGUILayout.Toggle(
-                    (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>().IsObserving,
-                    GUILayout.Width(15));
-
-            if (GUI.changed)
-                observerOBJList.serializedObject.ApplyModifiedProperties();
         }
 
         void Check(SerializedProperty list, int index)
@@ -292,8 +176,8 @@ namespace TP_MenuEditor
                 {
                     if (list.GetArrayElementAtIndex(index).objectReferenceValue != null)
                     {
-                        TPTooltipObserver script = (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>();
-                        DestroyImmediate(script);
+                        //TPTooltipObserver script = (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>();
+                        //DestroyImmediate(script);
                         list.GetArrayElementAtIndex(index).objectReferenceValue = null;
                     }
                     list.DeleteArrayElementAtIndex(index);
@@ -303,9 +187,9 @@ namespace TP_MenuEditor
 
         void AddObserver()
         {
-            observerOBJList.arraySize++;
-            observerOBJList.serializedObject.ApplyModifiedProperties();
-            TPTooltipDesigner.UpdateManager();
+            //observerOBJList.arraySize++;
+            //observerOBJList.serializedObject.ApplyModifiedProperties();
+            TPMenuDesigner.UpdateManager();
         }
 
         void EditAsset(SerializedProperty list, int index)
@@ -317,160 +201,136 @@ namespace TP_MenuEditor
                 }
         }
 
-        void SetType(SerializedProperty list, int index)
+        void DrawMenuTool()
         {
-            if (list.GetArrayElementAtIndex(index).objectReferenceValue == null)
-                return;
-            if ((list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>() == null)
-                return;
-
-            int actualSelected = 1;
-            int selectionFromInspector =
-                (int)(list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>().SetType;
-
-            actualSelected = EditorGUILayout.Popup( selectionFromInspector, enumNamesList, GUILayout.Width(100));
-
-            (list.GetArrayElementAtIndex(index).objectReferenceValue as GameObject).GetComponent<TPTooltipObserver>().SetType
-                = (TPTooltipObserver.ToolTipType)actualSelected;
+            
         }
 
-        void DrawPreviewTool()
+        void DrawOptionsToggleButtons()
         {
-            if (TPTooltipDesigner.TooltipCreator.TooltipLayout == null)
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle Resolution Setter", GUILayout.Width(250)))
+                SetBool(0);
+            if (GUILayout.Button("Toggle Quality Setter", GUILayout.Width(250)))
+                SetBool(1);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle Antialiasing Setter", GUILayout.Width(250)))
+                SetBool(2);
+            if (GUILayout.Button("Toggle Shadow quality Setter", GUILayout.Width(250)))
+                SetBool(3);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle Shadow Setter", GUILayout.Width(250)))
+                SetBool(4);
+            if (GUILayout.Button("Toggle Fullscreen Setter", GUILayout.Width(250)))
+                SetBool(5);
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle VSync Setter", GUILayout.Width(166)))
+                SetBool(6);
+            if (GUILayout.Button("Toggle FX volume Setter", GUILayout.Width(166)))
+                SetBool(7);
+            if (GUILayout.Button("Toggle Music volume Setter", GUILayout.Width(166)))
+                SetBool(8);
+            EditorGUILayout.EndHorizontal();
+        }
+
+        void DrawOptionsTool()
+        {
+            _OptionsLayout.serializedObject.UpdateIfRequiredOrScript();
+
+            EditorGUILayout.LabelField("Put there your Options Menu Prefab", TPMenuDesigner.skin.GetStyle("TipLabel"));
+            EditorGUILayout.PropertyField(_OptionsLayout, GUIContent.none);
+            if (GUI.changed)
+            {
+                _OptionsLayout.serializedObject.ApplyModifiedProperties();
+                FindLayoutProperties();
+            }
+            if (!canChange)
                 return;
 
-            EditorGUILayout.PropertyField(offset);
-            if (GUI.changed)
-                offset.serializedObject.ApplyModifiedProperties();
+            DrawOptionsToggleButtons();
 
-            EditorGUILayout.LabelField("Hold on item to preview tooltip offset", TPTooltipDesigner.skin.label, GUILayout.Height(20));
-
-            GUILayout.BeginArea(new Rect(0, 50, Screen.width, Screen.height));
-
-            GUI.DrawTexture(leftUp, previewTexture);
-            GUI.DrawTexture(leftDown, previewTexture);
-
-            GUI.DrawTexture(center, previewTexture);
-
-            GUI.DrawTexture(rightUp, previewTexture);
-            GUI.DrawTexture(rightDown, previewTexture);
-
-            Event e = Event.current;
-            if (leftUp.Contains(e.mousePosition) || leftDown.Contains(e.mousePosition) ||
-                center.Contains(e.mousePosition) || rightUp.Contains(e.mousePosition) || rightDown.Contains(e.mousePosition))
+            EditorGUILayout.BeginVertical();
+            
+            EditorGUILayout.Space();
+            if (booleans[0])
             {
-                Vector2 pos = (e.mousePosition - (textureVec / 2)) + offset.vector2Value;
-                pos.Set(Mathf.Clamp(pos.x, 0, window.maxSize.x - (tooltipTexture.width)),
-                    Mathf.Clamp(pos.y, 0, window.maxSize.y - (tooltipTexture.height + 50)));
-                Rect rect = new Rect(pos, textureVec);
-                GUI.DrawTexture(rect, tooltipTexture);
+                EditorGUILayout.LabelField("Resolution Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutResDrop, new GUIContent("Resolutio Dropdown"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[1])
+            {
+                EditorGUILayout.LabelField("Quality Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutQualDrop, new GUIContent("QualityLevel Dropdown"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[2])
+            {
+                EditorGUILayout.LabelField("Antialiasing Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutAliasingDrop, new GUIContent("Antialiasing Dropdown"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[3])
+            {
+                EditorGUILayout.LabelField("Shadow quality Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutShadowQualDrop, new GUIContent("ShadowQuality Dropdown"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[4])
+            {
+                EditorGUILayout.LabelField("Shadow Dropdown", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutShadowDrop, new GUIContent("Shadow Dropdown"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[5])
+            {
+                EditorGUILayout.LabelField("Fullscreen Toggle", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutFullScreen, new GUIContent("Fullscreen Toggle"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[6])
+            {
+                EditorGUILayout.LabelField("VSync Toggle", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutVSync, new GUIContent("VSync Toggle"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[7] || booleans[8])
+            {
+                EditorGUILayout.LabelField("Audio Mixer", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutAudioMixer, new GUIContent("Audio Mixer for Volumes"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[7])
+            {
+                EditorGUILayout.LabelField("FX volume Slider", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutFXSlider, new GUIContent("FXVolume Slider"));
+                EditorGUILayout.PropertyField(layoutFXText, new GUIContent("FX's property name"));
+            }
+            EditorGUILayout.Space();
+            if (booleans[8])
+            {
+                EditorGUILayout.LabelField("Music volume Slider", TPMenuDesigner.skin.GetStyle("TipLabel"));
+                EditorGUILayout.PropertyField(layoutMusicSlider, new GUIContent("MusicVolume Slider"));
+                EditorGUILayout.PropertyField(layoutMusicText, new GUIContent("Musics's property name"));
             }
 
-            GUILayout.EndArea();
+
+            EditorGUILayout.EndVertical();
+        }
+
+        void SetBool(int index)
+        {
+            booleans[index] = !booleans[index];
         }
 
         void Update()
         {
             if (EditorApplication.isCompiling)
                 this.Close();
-            if (tool == ToolEnum.Preview)
-                Repaint();
         }
+    }
 
-        void DrawLayoutsTool()
-        {
-            EditorGUILayout.LabelField("Put there parent of your Tooltip Layout", TPTooltipDesigner.skin.GetStyle("TipLabel"));
-            EditorGUILayout.PropertyField(tooltipLayout, GUIContent.none, GUILayout.Height(30));
-
-            if (GUI.changed)
-            {
-                TPTooltipDesigner.UpdateManager();
-                if (TPTooltipDesigner.TooltipCreator.TooltipLayout)
-                    TooltipLayout = new SerializedObject(TPTooltipDesigner.TooltipCreator.TooltipLayout);
-                tooltipLayout.serializedObject.ApplyModifiedProperties();
-                toggleItems = tooltipLayout.objectReferenceValue != null ? true : false;
-            }
-
-            EditorGUILayout.Space();
-
-            if (toggleItems)
-            {
-                EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("Show Texts"))
-                    ToggleShow(0);
-                if (GUILayout.Button("Show Images"))
-                    ToggleShow(1);
-                if (GUILayout.Button("Show Buttons"))
-                    ToggleShow(2);
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.Space();
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Text's Parent", TPTooltipDesigner.skin.GetStyle("TipLabel"), GUILayout.Width(140), GUILayout.Height(14));
-                EditorGUILayout.LabelField("Image's Parent", TPTooltipDesigner.skin.GetStyle("TipLabel"), GUILayout.Width(140), GUILayout.Height(14));
-                EditorGUILayout.LabelField("Button's Parent", TPTooltipDesigner.skin.GetStyle("TipLabel"), GUILayout.Width(140), GUILayout.Height(14));
-                EditorGUILayout.EndHorizontal();
-
-                if (layoutTextsParent == null || layoutImagesParent == null || layoutButtonsParent == null)
-                {
-                    FindLayoutProperties();
-                    return;
-                }
-
-                EditorGUILayout.BeginHorizontal();
-                
-                EditorGUILayout.PropertyField(layoutTextsParent, GUIContent.none, GUILayout.Height(20));
-                EditorGUILayout.PropertyField(layoutImagesParent, GUIContent.none, GUILayout.Height(20));
-                EditorGUILayout.PropertyField(layoutButtonsParent, GUIContent.none, GUILayout.Height(20));
-
-                if (GUI.changed)
-                {
-                    TooltipLayout.ApplyModifiedProperties();
-                    TPTooltipDesigner.UpdateManager();
-                }
-
-                EditorGUILayout.EndHorizontal();
-
-                EditorGUILayout.Space();
-
-                if (showBools[0])
-                    DrawItem(layoutTexts);
-                if (showBools[1])
-                    DrawItem(layoutImages);
-                if (showBools[2])
-                    DrawItem(layoutButtons);
-            }
-        }
-
-        void ToggleShow(int showIndex)
-        {
-            int length = showBools.Length;
-            for (int i = 0; i < length; i++)
-                showBools[i] = false;
-
-            showBools[showIndex] = true;
-        }
-        
-        void DrawItem(SerializedProperty layout)
-        {
-            layout.serializedObject.Update();
-
-            if (layout.arraySize == 0)
-            {
-                EditorGUILayout.HelpBox("Nothing loaded!", MessageType.Error);
-                return;
-            }
-            EditorGUILayout.LabelField("Loaded: ");
-            int length = layout.arraySize;
-            for (int i = 0; i < length; i++)
-            {
-                GUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(layout.GetArrayElementAtIndex(i), GUIContent.none, GUILayout.Width(350));
-                EditAsset(layout, i);
-                GUILayout.EndHorizontal();
-            }
-        }
-
-    } 
 }
