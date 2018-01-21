@@ -45,6 +45,9 @@ namespace TP_Options
         Image fxImage;
         Image musicImage;
 
+        float musicValue;
+        float fxValue;
+
         int CustomQualityIndex;
         int previousLevel;
         int currentResolutionIndex = 0;
@@ -88,6 +91,9 @@ namespace TP_Options
                     return;
                 }
             }
+
+            isMusicOn = true;
+            isFXOn = true;
 
             InitializeAllDropdowns();
             InitializeAllToggles();
@@ -286,14 +292,33 @@ namespace TP_Options
         {
             isMusicOn = !isMusicOn;
             musicImage.sprite = !isMusicOn ? musicImageOff : musicImageOn;
-            AudioMixer.SetFloat(mixerMusicText, isMusicOn ? 1 : 0);
+
+            if (!isMusicOn)
+                musicValue = GetFloat(mixerMusicText);
+
+            AudioMixer.SetFloat(mixerMusicText, isMusicOn ? musicValue : -80);
         }
+
 
         void SetFX()
         {
             isFXOn = !isFXOn;
             fxImage.sprite = !isFXOn ? fxImageOff : fxImageOn;
-            AudioMixer.SetFloat(mixerFXText, isFXOn ? 1 : 0);
+
+            if (!isFXOn)
+                fxValue = GetFloat(mixerFXText);
+
+            AudioMixer.SetFloat(mixerFXText, isFXOn ? fxValue : -80);
+        }
+
+        float GetFloat(string param)
+        {
+            float value;
+            bool result = AudioMixer.GetFloat(param, out value);
+            if (result)
+                return value;
+            else
+                return 0f;
         }
 
         void SetResolution(int index)
@@ -364,11 +389,15 @@ namespace TP_Options
         void SetFXVolume(float value)
         {
             AudioMixer.SetFloat(mixerFXText, value);
+            if (value <= -30)
+                AudioMixer.SetFloat(mixerFXText, -80);
         }
 
         void SetMusicVolume(float value)
         {
             AudioMixer.SetFloat(mixerMusicText, value);
+            if(value <= -30)
+                AudioMixer.SetFloat(mixerMusicText, -80);
         }
 
         void SetVSync(bool boolean)
