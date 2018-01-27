@@ -1,21 +1,26 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using TP_Options;
 
 namespace TP_OptionsEditor
 {
     [CustomEditor(typeof(TPOptionsGUIData))]
-    public class TPOptionsGUIDataEditor : ScriptlessOptionsEditor
+    internal class TPOptionsGUIDataEditor : ScriptlessOptionsEditor
     {
         TPOptionsGUIData TPMenuData;
 
         void OnEnable()
         {
             TPMenuData = (TPOptionsGUIData)target;
+            if (serializedObject.targetObject.hideFlags != HideFlags.NotEditable)
+                serializedObject.targetObject.hideFlags = HideFlags.NotEditable;
         }
 
         public override void OnInspectorGUI()
         {
-            serializedObject.Update();
+            EditorGUILayout.LabelField("Container for editor data");
+            if (!TPOptionsCreator.DebugMode)
+                return;
 
             EditorGUILayout.LabelField("GUI Skin");
             TPMenuData.GUISkin =
@@ -25,11 +30,6 @@ namespace TP_OptionsEditor
 
             EditorGUILayout.LabelField("Empty Options Menu Prefab");
             TPMenuData.OptionsPrefab = (EditorGUILayout.ObjectField(TPMenuData.OptionsPrefab, typeof(GameObject), true) as GameObject);
-
-            if (GUI.changed)
-                EditorUtility.SetDirty(TPMenuData);
-
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

@@ -6,6 +6,56 @@ namespace TP_Options
 {
     public class TPOptionsLayout : MonoBehaviour
     {
+        public bool isMusicOn;
+        public bool isFXOn;
+
+        [HideInInspector] public Dropdown resDropdown;
+        [HideInInspector] public Dropdown qualityDropdown;
+        [HideInInspector] public Dropdown aliasingDropdown;
+        [HideInInspector] public Dropdown shadowQualDropdown;
+        [HideInInspector] public Dropdown shadowDropdown;
+        [HideInInspector] public Dropdown textureDropdown;
+
+        [HideInInspector] public Toggle fullscreenToggle;
+        [HideInInspector] public Toggle vSyncToggle;
+        [HideInInspector] public Toggle anisotropicToggle;
+
+        [HideInInspector] public Button fxButton;
+        [HideInInspector] public Button musicButton;
+        [HideInInspector] public Sprite fxImageOn;
+        [HideInInspector] public Sprite fxImageOff;
+        [HideInInspector] public Sprite musicImageOn;
+        [HideInInspector] public Sprite musicImageOff;
+        [HideInInspector] public Slider fxSlider;
+        [HideInInspector] public Slider musicSlider;
+        [HideInInspector] public string mixerFXText;
+        [HideInInspector] public string mixerMusicText;
+        [HideInInspector] public UnityEngine.Audio.AudioMixer AudioMixer;
+
+        TPOptionsCreator creator;
+        Canvas canvas;
+        Image fxImage;
+        Image musicImage;
+
+        [SerializeField] float musicValue;
+        [SerializeField] float fxValue;
+
+        int CustomQualityIndex;
+        int previousLevel;
+        [SerializeField] int currentResolutionIndex = 0;
+        [SerializeField] int currentQualityIndex = 0;
+        [SerializeField] int currentAliasingIndex = 0;
+        [SerializeField] int currentShadowQualIndex = 0;
+        [SerializeField] int currentShadowIndex = 0;
+        [SerializeField] int currentTextureIndex = 0;
+
+        List<string> resOptions = new List<string>();
+        List<string> qualityOptions = new List<string>();
+        List<string> shadowQualOptions = new List<string>();
+        List<string> shadowOptions = new List<string>();
+        List<string> aliasingOptions = new List<string>();
+        List<string> textureOptions = new List<string>();
+
         delegate void Action(int i);
         Action qualityAction;
         Action resAction;
@@ -14,55 +64,6 @@ namespace TP_Options
         Action antialiasingAction;
         Action textureAction;
 
-        public bool isMusicOn;
-        public bool isFXOn;
-
-        public Dropdown resDropdown;
-        public Dropdown qualityDropdown;
-        public Dropdown aliasingDropdown;
-        public Dropdown shadowQualDropdown;
-        public Dropdown shadowDropdown;
-        public Dropdown textureDropdown;
-
-        public Toggle fullscreenToggle;
-        public Toggle vSyncToggle;
-        public Toggle anisotropicToggle;
-
-        public Button fxButton;
-        public Button musicButton;
-        public Sprite fxImageOn;
-        public Sprite fxImageOff;
-        public Sprite musicImageOn;
-        public Sprite musicImageOff;
-        public Slider fxSlider;
-        public Slider musicSlider;
-        public string mixerFXText;
-        public string mixerMusicText;
-        public UnityEngine.Audio.AudioMixer AudioMixer;
-
-        TPOptionsCreator creator;
-        Canvas canvas;
-        Image fxImage;
-        Image musicImage;
-
-        float musicValue;
-        float fxValue;
-
-        int CustomQualityIndex;
-        int previousLevel;
-        int currentResolutionIndex = 0;
-        int currentQualityIndex = 0;
-        int currentAliasingIndex = 0;
-        int currentShadowQualIndex = 0;
-        int currentShadowIndex = 0;
-        int currentTextureIndex = 0;
-
-        List<string> resOptions = new List<string>();
-        List<string> qualityOptions = new List<string>();
-        List<string> shadowQualOptions = new List<string>();
-        List<string> shadowOptions = new List<string>();
-        List<string> aliasingOptions = new List<string>();
-        List<string> textureOptions = new List<string>();
 
         void Awake()
         {

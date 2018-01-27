@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 namespace TP_OptionsEditor
 {
     [InitializeOnLoad]
-    public class TPOptionsDesigner : EditorWindow
+    internal class TPOptionsDesigner : EditorWindow
     {
         public static TPOptionsDesigner window;
         static string currentScene;
@@ -176,6 +176,7 @@ namespace TP_OptionsEditor
             }
             else
             {
+                ToggleDebugMode();
                 SpawnEmpty();
                 ResetManager();
 
@@ -212,6 +213,22 @@ namespace TP_OptionsEditor
                 OptionsCreator = null;
         }
 
+        void ToggleDebugMode()
+        {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Toggle Debug Mode", skin.button, GUILayout.Height(25)))
+            {
+                TPOptionsCreator.DebugMode = !TPOptionsCreator.DebugMode;
+                if (TPOptionsToolsWindow.window)
+                {
+                    UpdateManager();
+                    TPOptionsToolsWindow.window.Close();
+                }
+            }
+            GUILayout.Toggle(TPOptionsCreator.DebugMode, GUIContent.none, GUILayout.Width(15));
+            GUILayout.EndHorizontal();
+        }
+
         void SpawnEmpty()
         {
             if (GUILayout.Button("Spawn empty Options", skin.button, GUILayout.Height(50)))
@@ -230,9 +247,12 @@ namespace TP_OptionsEditor
         {
             if(creator != null)
                 creator.ApplyModifiedProperties();
-            //if(OptionsCreator)
-            //    OptionsCreator.Refresh();
-        }
+            if(OptionsCreator)
+                if(OptionsCreator.OptionsLayout)
+                EditorUtility.SetDirty(OptionsCreator.OptionsLayout);
+            if (TPOptionsToolsWindow.window)
+                TPOptionsToolsWindow.window.DrawTool();
+            }
 
         void DrawTools()
         {

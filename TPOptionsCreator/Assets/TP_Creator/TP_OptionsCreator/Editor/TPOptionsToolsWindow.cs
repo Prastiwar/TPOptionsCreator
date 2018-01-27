@@ -5,15 +5,9 @@ using UnityEditor.SceneManagement;
 namespace TP_OptionsEditor
 {
     [InitializeOnLoad]
-    public class TPOptionsToolsWindow : EditorWindow
+    internal class TPOptionsToolsWindow : EditorWindow
     {
         public static TPOptionsToolsWindow window;
-        //public enum ToolEnum
-        //{
-        //    Options,
-        //    MainMenu
-        //}
-        //static ToolEnum tool;
 
             // *** Options Menu *** ///
         SerializedObject OptionsLayout;
@@ -76,12 +70,11 @@ namespace TP_OptionsEditor
         static float windowSize = 515;
         static string currentScene;
 
-        public static void OpenToolWindow(/*ToolEnum _tool*/)
+        public static void OpenToolWindow()
         {
             if (window != null)
                 window.Close();
-
-            //tool = _tool;
+            
             window = (TPOptionsToolsWindow)GetWindow(typeof(TPOptionsToolsWindow));
 
             currentScene = EditorSceneManager.GetActiveScene().name;
@@ -90,6 +83,7 @@ namespace TP_OptionsEditor
             window.minSize = new Vector2(windowSize, windowSize);
             window.maxSize = new Vector2(windowSize, windowSize);
             window.Show();
+            AssetDatabase.OpenAsset(TPOptionsDesigner.OptionsCreator.OptionsLayout);
         }
 
         static void hierarchyWindowChanged()
@@ -160,7 +154,7 @@ namespace TP_OptionsEditor
             GUILayout.EndScrollView();
         }
 
-        void DrawTool()
+        public void DrawTool()
         {
             DrawOptionsTool();
         }
