@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TP_OptionsEditor
+namespace TP.OptionsEditor
 {
     public class TPOptionsGUIData : ScriptableObject
     {

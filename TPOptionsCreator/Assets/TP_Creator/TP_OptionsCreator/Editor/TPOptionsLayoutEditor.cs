@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
-using TP_Options;
+using TP.Options;
 
-namespace TP_OptionsEditor
+namespace TP.OptionsEditor
 {
     [CustomEditor(typeof(TPOptionsLayout))]
     internal class TPOptionsLayoutEditor : ScriptlessOptionsEditor

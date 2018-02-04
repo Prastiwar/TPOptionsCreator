@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using TP_Options;
+using TP.Options;
 
-namespace TP_OptionsEditor
+namespace TP.OptionsEditor
 {
     [CustomEditor(typeof(TPOptionsGUIData))]
     internal class TPOptionsGUIDataEditor : ScriptlessOptionsEditor

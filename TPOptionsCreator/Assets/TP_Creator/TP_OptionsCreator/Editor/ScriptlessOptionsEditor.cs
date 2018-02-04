@@ -1,8 +1,8 @@
-﻿using TP_Options;
+﻿using TP.Options;
 using UnityEditor;
 using UnityEngine;
 
-namespace TP_OptionsEditor
+namespace TP.OptionsEditor
 {
     internal class ScriptlessOptionsEditor : Editor
     {

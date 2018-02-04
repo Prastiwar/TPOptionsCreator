@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TP_Options
+namespace TP.Options
 {
     public class TPOptionsLayout : MonoBehaviour
     {

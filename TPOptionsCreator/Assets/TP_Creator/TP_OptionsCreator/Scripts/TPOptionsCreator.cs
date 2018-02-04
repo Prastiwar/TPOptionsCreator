@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TP_Options
+namespace TP.Options
 {
     public class TPOptionsCreator : MonoBehaviour
     {

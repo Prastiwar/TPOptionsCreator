@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-namespace TP_OptionsEditor
+namespace TP.OptionsEditor
 {
     [InitializeOnLoad]
     internal class TPOptionsToolsWindow : EditorWindow

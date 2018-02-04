@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using TP_Options;
+using TP.Options;
 using UnityEditor.SceneManagement;
 
-namespace TP_OptionsEditor
+namespace TP.OptionsEditor
 {
     [InitializeOnLoad]
     internal class TPOptionsDesigner : EditorWindow
