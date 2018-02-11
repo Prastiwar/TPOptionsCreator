@@ -2973,6 +2973,14 @@ MonoBehaviour:
   mixerFXText: FXVolume
   mixerMusicText: MusicVolume
   AudioMixer: {fileID: 24100000, guid: 7e3884f2d54d9b54ab0a9690b5113c22, type: 2}
+  musicValue: 0
+  fxValue: 0
+  currentResolutionIndex: 0
+  currentQualityIndex: 0
+  currentAliasingIndex: 0
+  currentShadowQualIndex: 0
+  currentShadowIndex: 0
+  currentTextureIndex: 0
 --- !u!114 &114268670429463134
 MonoBehaviour:
   m_ObjectHideFlags: 1

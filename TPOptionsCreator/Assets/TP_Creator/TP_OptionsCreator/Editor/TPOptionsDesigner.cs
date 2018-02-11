@@ -2,6 +2,7 @@
 using UnityEditor;
 using TP.Options;
 using UnityEditor.SceneManagement;
+using TP.Utilities;
 
 namespace TP.OptionsEditor
 {
@@ -38,7 +39,7 @@ namespace TP.OptionsEditor
             }
         }
 
-        public static TPOptionsGUIData EditorData;
+        public static TPEditorGUIData EditorData;
         public static TPOptionsCreator OptionsCreator;
         public static GUISkin skin;
 
@@ -67,9 +68,13 @@ namespace TP.OptionsEditor
 
         void InitEditorData()
         {
+            string path = "Assets/TP_Creator/_CreatorResources/";
+            if (!System.IO.Directory.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+
             EditorData = AssetDatabase.LoadAssetAtPath(
-                   "Assets/TP_Creator/TP_OptionsCreator/EditorResources/OptionsEditorGUIData.asset",
-                   typeof(TPOptionsGUIData)) as TPOptionsGUIData;
+                   path + "OptionsEditorGUIData.asset",
+                   typeof(TPEditorGUIData)) as TPEditorGUIData;
             
             if (EditorData == null)
                 CreateEditorData();
@@ -83,21 +88,26 @@ namespace TP.OptionsEditor
         {
             if (EditorData.GUISkin == null)
                 EditorData.GUISkin = AssetDatabase.LoadAssetAtPath(
-                      "Assets/TP_Creator/TP_OptionsCreator/EditorResources/TPOptionsGUISkin.guiskin",
+                      "Assets/TP_Creator/_CreatorResources/TPEditorGUISkin.guiskin",
                       typeof(GUISkin)) as GUISkin;
 
-            if (EditorData.OptionsPrefab == null)
-                EditorData.OptionsPrefab = AssetDatabase.LoadAssetAtPath(
-                    "Assets/TP_Creator/TP_OptionsCreator/EditorResources/OptionsCanvas.prefab",
+            if (EditorData.Prefab == null)
+                EditorData.Prefab = AssetDatabase.LoadAssetAtPath(
+                    "Assets/TP_Creator/_CreatorResources/OptionsCanvas.prefab",
                     typeof(GameObject)) as GameObject;
+
+            if (EditorData.GUISkin == null)
+            {
+                Debug.LogError("There is no guiskin for TPEditor!");
+            }
 
             EditorUtility.SetDirty(EditorData);
         }
 
         void CreateEditorData()
         {
-            TPOptionsGUIData newEditorData = ScriptableObject.CreateInstance<TPOptionsGUIData>();
-            AssetDatabase.CreateAsset(newEditorData, "Assets/TP_Creator/TP_OptionsCreator/EditorResources/OptionsEditorGUIData.asset");
+            TPEditorGUIData newEditorData = ScriptableObject.CreateInstance<TPEditorGUIData>();
+            AssetDatabase.CreateAsset(newEditorData, "Assets/TP_Creator/_CreatorResources/OptionsEditorGUIData.asset");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             EditorData = newEditorData;
@@ -233,12 +243,12 @@ namespace TP.OptionsEditor
         {
             if (GUILayout.Button("Spawn empty Options", skin.button, GUILayout.Height(50)))
             {
-                if (EditorData.OptionsPrefab == null)
+                if (EditorData.Prefab == null)
                 {
-                    Debug.LogError("There is no options prefab in EditorGUIData file!");
+                    Debug.LogError("There is no options prefab named 'OptionsCanvas' in Creator Resources folder!");
                     return;
                 }
-                Instantiate(EditorData.OptionsPrefab);
+                Instantiate(EditorData.Prefab);
                 Debug.Log("Options example Created");
             }
         }
