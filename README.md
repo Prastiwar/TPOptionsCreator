@@ -1,2 +1,9 @@
-# TPMenuCreator
-A TP tool for creating main menu for your game.
+# TPOptionsCreator
+A TP tool for creating options for your game.
+#### Full documentation: https://github.com/Prastiwar/TPAchievementCreator/blob/master/AchievementDocumentation.docx
+<br>
+<br>
+<p align="center">
+  <img src = https://d3higte790sj35.cloudfront.net/images/sw/cp/632c4658350d6915d7240cd5c243048a.png>
+  </img>
+</p>
