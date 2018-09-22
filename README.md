@@ -1,3 +1,5 @@
+# **This is an archived repository. Probably you want to check my** [TPFramework](https://github.com/Prastiwar/TPFrameworkUnity) **where it is merged into.**
+
 # TPOptionsCreator
 A TP tool for creating options for your game.
 #### Full documentation: https://github.com/Prastiwar/TPAchievementCreator/blob/master/AchievementDocumentation.docx
